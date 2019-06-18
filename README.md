@@ -14,7 +14,7 @@ Phoenix v1.4.8
 Install the `custom_phx` archive to add new mix tasks.
 
 ```
-mix archive.install https://github.com/mutablestate/custom_phx/archives/custom_phx.ez
+mix archive.install https://github.com/mutablestate/custom_phx/raw/master/archives/custom_phx.ez
 ```
 
 Create a new Phoenix project with default options.
