@@ -1,0 +1,6 @@
+/* This file is for your main application css. */
+
+@import './tailwind.css';
+@import './phoenix.css'; /* remove to build custom home page */
+@import './custom/base.css';
+@import './custom/alert.css';

@@ -1,0 +1,12 @@
+/* custom base styles */
+
+a {
+  @apply text-blue-600;
+}
+a:hover {
+  @apply text-blue-800;
+}
+
+h1 {
+  @apply text-3xl text-phoenix;
+}

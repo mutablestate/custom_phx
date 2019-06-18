@@ -1,0 +1,35 @@
+<section class="text-center font-thin border-b-2 bg-gray-100 mb-12 p-12 rounded">
+  <h1><%%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
+  <p class="text-xl m-0">A productive web framework that<br/>does not compromise speed or maintainability.</p>
+</section>
+
+<section class="flex mb-4">
+  <article class="w-1/2">
+    <h2 class="text-2xl tracking-tight mb-6">Resources</h2>
+    <ul class="mb-10">
+      <li class="mb-4">
+        <a href="https://hexdocs.pm/phoenix/overview.html">Guides &amp; Docs</a>
+      </li>
+      <li class="mb-4">
+        <a href="https://github.com/phoenixframework/phoenix">Source</a>
+      </li>
+      <li class="mb-4">
+        <a href="https://github.com/phoenixframework/phoenix/blob/v1.4/CHANGELOG.md">v1.4 Changelog</a>
+      </li>
+    </ul>
+  </article>
+  <article class="w-1/2">
+    <h2 class="text-2xl tracking-tight mb-6">Help</h2>
+    <ul class="mb-10">
+      <li class="mb-4">
+        <a href="https://elixirforum.com/c/phoenix-forum">Forum</a>
+      </li>
+      <li class="mb-4">
+        <a href="https://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on Freenode IRC</a>
+      </li>
+      <li class="mb-4">
+        <a href="https://twitter.com/elixirphoenix">Twitter @elixirphoenix</a>
+      </li>
+    </ul>
+  </article>
+</section>
