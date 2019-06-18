@@ -17,9 +17,7 @@
 erl_crash.dump
 
 # Also ignore archive artifacts (built via "mix archive.build").
-*.ez
+# *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-custom_phx-*.tar
-
-foo_archives/
+# custom_phx-*.tar

@@ -1,21 +1,40 @@
 # CustomPhx
 
-**TODO: Add description**
+Mix tasks to help customise a newly generated Phoenix app.
 
-## Installation
+## Usage
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `custom_phx` to your list of dependencies in `mix.exs`:
+Requires Phoenix 1.4 or above (configured with webpack).
 
-```elixir
-def deps do
-  [
-    {:custom_phx, "~> 0.1.0"}
-  ]
-end
+```
+mix phx.new --version
+Phoenix v1.4.8
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/custom_phx](https://hexdocs.pm/custom_phx).
+Install the `custom_phx` archive to add new mix tasks.
 
+```
+mix archive.install https://github.com/mutablestate/custom_phx/archives/custom_phx.ez
+```
+
+Create a new Phoenix project with default options.
+
+```
+mix phx.new APP_NAME
+
+Fetch and install dependenciews? [Yn] y
+
+cd APP_NAME
+```
+
+## Mix Tasks
+
+Replace Milligram with Tailwindcss.
+
+```
+mix tailwind.install
+```
+
+## Copyright and License
+
+[MIT License](LICENSE.md).
