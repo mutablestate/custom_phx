@@ -4,9 +4,10 @@ defmodule CustomPhx.MixProject do
   def project do
     [
       app: :custom_phx,
-      version: "0.1.0",
+      version: version(),
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps()
     ]
   end
@@ -23,6 +24,22 @@ defmodule CustomPhx.MixProject do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+    ]
+  end
+
+  def version, do: "0.0.1"
+
+  defp build_releases(_) do
+    Mix.Tasks.Compile.run([])
+    Mix.Tasks.Archive.Build.run([])
+    Mix.Tasks.Archive.Build.run(["--output=custom_phx.ez"])
+    File.rename("custom_phx.ez", "./archives/custom_phx.ez")
+    File.rename("custom_phx-#{version()}.ez", "./archives/custom_phx-#{version()}.ez")
+  end
+
+  defp aliases do
+    [
+      build: [&build_releases/1]
     ]
   end
 end
