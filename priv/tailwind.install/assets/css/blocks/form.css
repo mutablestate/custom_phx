@@ -1,0 +1,21 @@
+/* form block */
+
+.form {
+}
+
+.form__input {
+  @apply shadow appearance-none border rounded w-full py-2 px-3 mt-1 leading-tight;
+}
+.form__input:focus {
+  @apply outline-none shadow-outline;
+}
+.form__input--gray {
+  @apply text-gray-700;
+}
+
+.form__label {
+  @apply font-bold uppercase text-sm;
+}
+.form__label--gray {
+  @apply text-gray-600;
+}

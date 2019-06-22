@@ -27,7 +27,7 @@ defmodule CustomPhx.MixProject do
     ]
   end
 
-  def version, do: "0.0.1"
+  def version, do: "0.0.2"
 
   defp build_releases(_) do
     Mix.Tasks.Compile.run([])

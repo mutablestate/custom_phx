@@ -1,6 +1,10 @@
 /* This file is for your main application css. */
 
-@import './tailwind.css';
-@import './phoenix.css'; /* remove to build custom home page */
-@import './custom/base.css';
-@import './custom/alert.css';
+@import './tailwind.css'; /* tailwindcss imports */
+@import './phoenix.css'; /* default home page styles */
+@import './base.css'; /* override base styles */
+
+@import './blocks/alert.css';
+@import './blocks/btn.css';
+@import './blocks/table.css';
+@import './blocks/form.css';
