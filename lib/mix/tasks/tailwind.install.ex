@@ -19,8 +19,7 @@ defmodule Mix.Tasks.Tailwind.Install do
     {:text, Path.join([@css_path, "tailwind.css"]), Path.join([@css_path, "tailwind.css"])},
     {:text, Path.join([@css_path, "blocks", "alert.css"]), Path.join([@css_path, "blocks", "alert.css"])},
     {:text, Path.join([@css_path, "blocks", "btn.css"]), Path.join([@css_path, "blocks", "btn.css"])},
-    {:text, Path.join([@css_path, "blocks", "table.css"]), Path.join([@css_path, "blocks", "table.css"])},
-    {:text, Path.join([@css_path, "blocks", "form.css"]), Path.join([@css_path, "blocks", "form.css"])}
+    {:text, Path.join([@css_path, "blocks", "table.css"]), Path.join([@css_path, "blocks", "table.css"])}
   ]
 
   @assets_path "assets"
@@ -74,42 +73,20 @@ defmodule Mix.Tasks.Tailwind.Install do
 
      * Installing npm dev dependencies...
     """)
-    System.cmd("npm", ["install", "-D", "tailwindcss", "postcss-loader", "postcss-import"], cd: "assets")
 
-    Mix.shell().info("""
+    System.cmd("npm", ["install", "-D", "tailwindcss", "@tailwindcss/custom-forms", "postcss-loader", "postcss-import"],
+      cd: "assets"
+    )
 
-     * Copying config assets...
-    """)
-    files = @config
-    copy_files(files, base: base_module())
+    copy_steps = [
+      %{files: @config, msg: "config assets", base: base_module()},
+      %{files: @css, msg: "css assets", base: base_module()},
+      %{files: @web_templates, msg: "web templates", base: []},
+      %{files: @gen_templates, msg: "priv templates", base: []},
+      %{files: @mix_tasks, msg: "mix tasks", base: []}
+    ]
 
-    Mix.shell().info("""
-
-     * Copying css assets...
-    """)
-    files = @css
-    copy_files(files, base: base_module())
-
-    Mix.shell().info("""
-
-     * Copying web templates...
-    """)
-    files = @web_templates
-    copy_files(files, [])
-
-    Mix.shell().info("""
-
-     * Copying priv templates...
-    """)
-    files = @gen_templates
-    copy_files(files, [])
-
-    Mix.shell().info("""
-
-     * Copying mix tasks...
-    """)
-    files = @mix_tasks
-    copy_files(files, [])
+    for step <- copy_steps, do: copy_files_with_msg(step)
 
     Mix.shell().info("""
 
@@ -120,6 +97,15 @@ defmodule Mix.Tasks.Tailwind.Install do
         mix tailwind.gen.html
         # Generates controller, Tailwindcss styled views, and context for an HTML resource
     """)
+  end
+
+  defp copy_files_with_msg(%{files: files, msg: msg, base: base}) do
+    Mix.shell().info("""
+
+      Copying #{msg}...
+    """)
+
+    copy_files(files, base: base)
   end
 
   defp copy_files(files, opts) do

@@ -102,8 +102,8 @@ defmodule Mix.Tasks.Tailwind.Gen.Html do
 
   @doc false
   def run(args) do
-    if Mix.Project.umbrella? do
-      Mix.raise "mix tailwind.gen.html can only be run inside an application directory"
+    if Mix.Project.umbrella?() do
+      Mix.raise("mix tailwind.gen.html can only be run inside an application directory")
     end
 
     {context, schema} = Gen.Context.build(args)
@@ -125,9 +125,11 @@ defmodule Mix.Tasks.Tailwind.Gen.Html do
     |> Kernel.++(context_files(context))
     |> Mix.Phoenix.prompt_for_conflicts()
   end
+
   defp context_files(%Context{generate?: true} = context) do
     Gen.Context.files_to_be_generated(context)
   end
+
   defp context_files(%Context{generate?: false}) do
     []
   end
@@ -139,14 +141,15 @@ defmodule Mix.Tasks.Tailwind.Gen.Html do
     web_path = to_string(schema.web_path)
 
     [
-      {:eex, "controller.ex",       Path.join([web_prefix, "controllers", web_path, "#{schema.singular}_controller.ex"])},
-      {:eex, "edit.html.eex",       Path.join([web_prefix, "templates", web_path, schema.singular, "edit.html.eex"])},
-      {:eex, "form.html.eex",       Path.join([web_prefix, "templates", web_path, schema.singular, "form.html.eex"])},
-      {:eex, "index.html.eex",      Path.join([web_prefix, "templates", web_path, schema.singular, "index.html.eex"])},
-      {:eex, "new.html.eex",        Path.join([web_prefix, "templates", web_path, schema.singular, "new.html.eex"])},
-      {:eex, "show.html.eex",       Path.join([web_prefix, "templates", web_path, schema.singular, "show.html.eex"])},
-      {:eex, "view.ex",             Path.join([web_prefix, "views", web_path, "#{schema.singular}_view.ex"])},
-      {:eex, "controller_test.exs", Path.join([test_prefix, "controllers", web_path, "#{schema.singular}_controller_test.exs"])},
+      {:eex, "controller.ex", Path.join([web_prefix, "controllers", web_path, "#{schema.singular}_controller.ex"])},
+      {:eex, "edit.html.eex", Path.join([web_prefix, "templates", web_path, schema.singular, "edit.html.eex"])},
+      {:eex, "form.html.eex", Path.join([web_prefix, "templates", web_path, schema.singular, "form.html.eex"])},
+      {:eex, "index.html.eex", Path.join([web_prefix, "templates", web_path, schema.singular, "index.html.eex"])},
+      {:eex, "new.html.eex", Path.join([web_prefix, "templates", web_path, schema.singular, "new.html.eex"])},
+      {:eex, "show.html.eex", Path.join([web_prefix, "templates", web_path, schema.singular, "show.html.eex"])},
+      {:eex, "view.ex", Path.join([web_prefix, "views", web_path, "#{schema.singular}_view.ex"])},
+      {:eex, "controller_test.exs",
+       Path.join([test_prefix, "controllers", web_path, "#{schema.singular}_controller_test.exs"])}
     ]
   end
 
@@ -161,24 +164,27 @@ defmodule Mix.Tasks.Tailwind.Gen.Html do
   @doc false
   def print_shell_instructions(%Context{schema: schema, context_app: ctx_app} = context) do
     if schema.web_namespace do
-      Mix.shell.info """
+      Mix.shell().info("""
 
       Add the resource to your #{schema.web_namespace} :browser scope in #{Mix.Phoenix.web_path(ctx_app)}/router.ex:
 
-          scope "/#{schema.web_path}", #{inspect Module.concat(context.web_module, schema.web_namespace)}, as: :#{schema.web_path} do
+          scope "/#{schema.web_path}", #{inspect(Module.concat(context.web_module, schema.web_namespace))}, as: :#{
+        schema.web_path
+      } do
             pipe_through :browser
             ...
-            resources "/#{schema.plural}", #{inspect schema.alias}Controller
+            resources "/#{schema.plural}", #{inspect(schema.alias)}Controller
           end
-      """
+      """)
     else
-      Mix.shell.info """
+      Mix.shell().info("""
 
       Add the resource to your browser scope in #{Mix.Phoenix.web_path(ctx_app)}/router.ex:
 
-          resources "/#{schema.plural}", #{inspect schema.alias}Controller
-      """
+          resources "/#{schema.plural}", #{inspect(schema.alias)}Controller
+      """)
     end
+
     if context.generate?, do: Gen.Context.print_shell_instructions(context)
   end
 
@@ -186,35 +192,77 @@ defmodule Mix.Tasks.Tailwind.Gen.Html do
     Enum.map(schema.attrs, fn
       {_, {:references, _}} ->
         {nil, nil, nil}
+
       {key, :integer} ->
-        {label(key), ~s(<%= number_input f, #{inspect(key)} %>), error(key)}
+        {block_label(key),
+         ~s(  <%= number_input f, #{inspect(key)}, class: "form-input block w-full mt-1" %>) <> block_end(), error(key)}
+
       {key, :float} ->
-        {label(key), ~s(<%= number_input f, #{inspect(key)}, step: "any" %>), error(key)}
+        {block_label(key),
+         ~s(  <%= number_input f, #{inspect(key)}, step: "any", class: "form-input block w-full mt-1" %>) <>
+           block_end(), error(key)}
+
       {key, :decimal} ->
-        {label(key), ~s(<%= number_input f, #{inspect(key)}, step: "any" %>), error(key)}
+        {block_label(key),
+         ~s(<%= number_input f, #{inspect(key)}, step: "any", class: "form-input block w-full mt-1" %>) <> block_end(),
+         error(key)}
+
       {key, :boolean} ->
-        {label(key), ~s(<%= checkbox f, #{inspect(key)} %>), error(key)}
+        {inline_label(key), ~s(    <%= checkbox f, #{inspect(key)}, class: "form-checkbox mr-1" %>) <> block_end(),
+         error(key) <> ~s(\n    </div>)}
+
       {key, :text} ->
-        {label(key), ~s(<%= textarea f, #{inspect(key)} %>), error(key)}
+        {block_label(key), ~s(  <%= textarea f, #{inspect(key)}, class: "form-textarea w-full mt-1" %>) <> block_end(),
+         error(key)}
+
       {key, :date} ->
         {label(key), ~s(<%= date_select f, #{inspect(key)} %>), error(key)}
+
       {key, :time} ->
         {label(key), ~s(<%= time_select f, #{inspect(key)} %>), error(key)}
+
       {key, :utc_datetime} ->
         {label(key), ~s(<%= datetime_select f, #{inspect(key)} %>), error(key)}
+
       {key, :naive_datetime} ->
         {label(key), ~s(<%= datetime_select f, #{inspect(key)} %>), error(key)}
+
       {key, {:array, :integer}} ->
-        {label(key), ~s(<%= multiple_select f, #{inspect(key)}, ["1": 1, "2": 2] %>), error(key)}
+        {block_label(key),
+         ~s(  <%= multiple_select f, #{inspect(key)}, ["1": 1, "2": 2], class: "form-multiselect" %>) <>
+           block_end(), error(key)}
+
       {key, {:array, _}} ->
-        {label(key), ~s(<%= multiple_select f, #{inspect(key)}, ["Option 1": "option1", "Option 2": "option2"] %>), error(key)}
-      {key, _}  ->
-        {label(key), ~s(<%= text_input f, #{inspect(key)}, class: "form__input form__input--gray" %>), error(key)}
+        {block_label(key),
+         ~s(  <%= multiple_select f, #{inspect(key)}, ["Option 1": "option1", "Option 2": "option2"], class="form-multiselect" %>) <>
+           block_end(), error(key)}
+
+      {key, _} ->
+        {block_label(key), ~s(  <%= text_input f, #{inspect(key)}, class: "form-input w-full mt-1" %>) <> block_end(),
+         error(key)}
     end)
   end
 
+  defp inline_label(key) do
+    label = Atom.to_string(key)
+    ~s(<div class="mt-6 mb-6">
+      <%= label class: "inline-flex items-center" do %>
+        <span class="form-label mr-3">#{label}</span>
+        )
+  end
+
+  defp block_label(key) do
+    label = Atom.to_string(key)
+    ~s(<%= label class: "block mb-6" do %>
+      <span class="form-label block">#{label}</span>)
+  end
+
+  defp block_end do
+    ~s(\n    <% end %>)
+  end
+
   defp label(key) do
-    ~s(<%= label f, #{inspect(key)}, class: "form__label form__label--gray" %>)
+    ~s(<%= label f, #{inspect(key)}, class: "form-label" %>)
   end
 
   defp error(field) do

@@ -6,13 +6,11 @@
     </div>
   <%% end %>
   <%= for {label, input, error} <- inputs, input do %>
-  <div class="mb-4">
     <%= label %>
     <%= input %>
     <%= error %>
-  </div>
   <% end %>
-  <div>
+  <div class="mt-10">
     <%%= submit "Save", class: "btn btn--blue" %>
   </div>
 <%% end %>
