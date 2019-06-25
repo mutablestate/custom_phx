@@ -1,0 +1,24 @@
+/* table block */
+
+.table {
+  @apply text-left w-full border-collapse;
+}
+
+.table__tr--highlight:hover {
+  @apply bg-gray-100;
+}
+
+.table__th {
+  @apply py-4 px-6 font-bold uppercase text-sm border-b;
+}
+.table__th--gray {
+  @apply text-gray-500 border-gray-200 bg-gray-100;
+}
+
+.table__td {
+  @apply py-4 px-6 border-b;
+}
+
+.table__td--gray {
+  @apply border-gray-200;
+}

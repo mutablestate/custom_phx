@@ -5,7 +5,7 @@ defmodule CustomPhx.MixProject do
     [
       app: :custom_phx,
       version: version(),
-      elixir: "~> 1.8",
+      elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -27,7 +27,7 @@ defmodule CustomPhx.MixProject do
     ]
   end
 
-  def version, do: "0.0.1"
+  def version, do: "0.0.2"
 
   defp build_releases(_) do
     Mix.Tasks.Compile.run([])

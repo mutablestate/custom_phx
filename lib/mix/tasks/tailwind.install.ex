@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Tailwind.Install do
   @moduledoc """
   Install Tailwindcss in a new Phoenix project replacing Milligram.
 
-  Provides the task
+  Provides task
 
     mix tailwind.install
   """
@@ -14,10 +14,12 @@ defmodule Mix.Tasks.Tailwind.Install do
   @css_path "assets/css"
   @css [
     {:text, Path.join([@css_path, "app.css"]), Path.join([@css_path, "app.css"])},
+    {:text, Path.join([@css_path, "base.css"]), Path.join([@css_path, "base.css"])},
     {:text, Path.join([@css_path, "phoenix.css"]), Path.join([@css_path, "phoenix.css"])},
     {:text, Path.join([@css_path, "tailwind.css"]), Path.join([@css_path, "tailwind.css"])},
-    {:text, Path.join([@css_path, "custom", "alert.css"]), Path.join([@css_path, "custom", "alert.css"])},
-    {:text, Path.join([@css_path, "custom", "base.css"]), Path.join([@css_path, "custom", "base.css"])}
+    {:text, Path.join([@css_path, "blocks", "alert.css"]), Path.join([@css_path, "blocks", "alert.css"])},
+    {:text, Path.join([@css_path, "blocks", "btn.css"]), Path.join([@css_path, "blocks", "btn.css"])},
+    {:text, Path.join([@css_path, "blocks", "table.css"]), Path.join([@css_path, "blocks", "table.css"])}
   ]
 
   @assets_path "assets"
@@ -27,13 +29,30 @@ defmodule Mix.Tasks.Tailwind.Install do
     {:text, Path.join([@assets_path, "webpack.config.js"]), Path.join([@assets_path, "webpack.config.js"])}
   ]
 
-  @templates [
+  @web_templates [
     {:eex, "templates/layout/app.html.eex", Path.join(["lib", "base_name_web", "templates", "layout", "app.html.eex"])},
     {:eex, "templates/page/index.html.eex", Path.join(["lib", "base_name_web", "templates", "page", "index.html.eex"])}
   ]
 
+  @gen_path "priv/templates/tailwind.gen.html"
+  @gen_templates [
+    {:text, Path.join([@gen_path, "controller_test.exs"]), Path.join([@gen_path, "controller_test.exs"])},
+    {:text, Path.join([@gen_path, "controller.ex"]), Path.join([@gen_path, "controller.ex"])},
+    {:text, Path.join([@gen_path, "edit.html.eex"]), Path.join([@gen_path, "edit.html.eex"])},
+    {:text, Path.join([@gen_path, "form.html.eex"]), Path.join([@gen_path, "form.html.eex"])},
+    {:text, Path.join([@gen_path, "index.html.eex"]), Path.join([@gen_path, "index.html.eex"])},
+    {:text, Path.join([@gen_path, "new.html.eex"]), Path.join([@gen_path, "new.html.eex"])},
+    {:text, Path.join([@gen_path, "show.html.eex"]), Path.join([@gen_path, "show.html.eex"])},
+    {:text, Path.join([@gen_path, "view.ex"]), Path.join([@gen_path, "view.ex"])}
+  ]
+
+  @mix_tasks_path "lib/base_name/mix/tasks"
+  @mix_tasks [
+    {:text, "mix/tasks/tailwind.gen.html.ex", Path.join([@mix_tasks_path, "tailwind.gen.html.ex"])}
+  ]
+
   root = "priv/tailwind.install"
-  all_files = @css ++ @config ++ @templates
+  all_files = @css ++ @config ++ @web_templates ++ @gen_templates ++ @mix_tasks
 
   for {_, source, _} <- all_files do
     @external_resource Path.join(root, source)
@@ -51,52 +70,42 @@ defmodule Mix.Tasks.Tailwind.Install do
     end
 
     Mix.shell().info("""
-    Installing npm dev dependencies...
 
-      * tailwindcss
-      * postcss-loader
-      * postcss-import
+     * Installing npm dev dependencies...
     """)
 
-    System.cmd("npm", ["install", "-D", "tailwindcss", "postcss-loader", "postcss-import"], cd: "assets")
+    System.cmd("npm", ["install", "-D", "tailwindcss", "@tailwindcss/custom-forms", "postcss-loader", "postcss-import"],
+      cd: "assets"
+    )
+
+    copy_steps = [
+      %{files: @config, msg: "config assets", base: base_module()},
+      %{files: @css, msg: "css assets", base: base_module()},
+      %{files: @web_templates, msg: "web templates", base: []},
+      %{files: @gen_templates, msg: "priv templates", base: []},
+      %{files: @mix_tasks, msg: "mix tasks", base: []}
+    ]
+
+    for step <- copy_steps, do: copy_files_with_msg(step)
 
     Mix.shell().info("""
-    Copying asset config files...
 
-      * postcss.config.js
-      * tailwind.config.js
-      * webpack.config.js
+    Successfully installed Tailwindcss!
+
+      New mix task added:
+
+        mix tailwind.gen.html
+        # Generates controller, Tailwindcss styled views, and context for an HTML resource
     """)
+  end
 
-    files = @config
-    copy_files(files, base: base_module())
-
+  defp copy_files_with_msg(%{files: files, msg: msg, base: base}) do
     Mix.shell().info("""
-    Copying asset css files...
 
-      * app.css
-      * phoenix.css
-      * tailwind.css
-      * custom/alert.css
-      * custom/base.css
+      Copying #{msg}...
     """)
 
-    files = @css
-    copy_files(files, base: base_module())
-
-    Mix.shell().info("""
-    Copying template eex files...
-
-      * layout/app.html.eex
-      * page/index.html.eex
-    """)
-
-    files = @templates
-    copy_files(files, [])
-
-    Mix.shell().info("""
-    You're all set!
-    """)
+    copy_files(files, base: base)
   end
 
   defp copy_files(files, opts) do

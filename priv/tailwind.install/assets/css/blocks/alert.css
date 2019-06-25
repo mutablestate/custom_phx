@@ -1,25 +1,20 @@
-/* custom alert styles */
+/* alert block */
 
 .alert {
   @apply p-3 mb-4 rounded;
 }
+.alert:empty {
+  @apply hidden;
+}
 
-.alert-info {
+.alert--info {
   @apply text-blue-900 bg-blue-300 border-blue-500;
 }
 
-.alert-warning {
+.alert--warning {
   @apply text-orange-800 bg-yellow-200 border-yellow-500;
 }
 
-.alert-danger {
+.alert--danger {
   @apply text-red-800 bg-red-200 border-red-500;
-}
-
-.alert p {
-  @apply mb-0;
-}
-
-.alert:empty {
-  @apply hidden;
 }

@@ -2,39 +2,45 @@
 
 Mix tasks to help customise a newly generated Phoenix app.
 
-## Usage
+## Requirements
 
 Requires Phoenix 1.4 or above (configured with webpack).
 
-```
+```sh
 mix phx.new --version
 Phoenix v1.4.8
 ```
 
-Install the `custom_phx` archive to add new mix tasks.
+## Usage
 
-```
+1. Install the `custom_phx` archive (adds new mix tasks).
+
+```sh
 mix archive.install https://github.com/mutablestate/custom_phx/raw/master/archives/custom_phx.ez
 ```
 
-Create a new Phoenix project with default options.
+2. Create a new Phoenix project (tested with default options).
 
-```
+```sh
 mix phx.new APP_NAME
 
-Fetch and install dependenciews? [Yn] y
+Fetch and install dependencies? [Yn] y
 
 cd APP_NAME
 ```
 
-## Mix Tasks
+3. Install Tailwindcss (config, templates, HTML generator task).
 
-Replace Milligram with Tailwindcss.
-
-```
+```sh
 mix tailwind.install
 ```
 
-## Copyright and License
+4. (optional) Run the Tailwindcss HTML generator (instead of `mix phx.gen.html`).
 
-[MIT License](LICENSE.md).
+```sh
+mix tailwind.gen.html Accounts User users name:string email:string
+```
+
+## License
+
+[MIT](LICENSE.md)
