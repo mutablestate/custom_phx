@@ -5,7 +5,7 @@ defmodule CustomPhx.MixProject do
     [
       app: :custom_phx,
       version: version(),
-      elixir: "~> 1.8",
+      elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
